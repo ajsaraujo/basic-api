@@ -16,6 +16,11 @@ const UserSchema = new mongoose.Schema(
         password: {
             type: String, 
             required: true
+        },
+
+        admin: {
+            type: Boolean, 
+            default: false
         }
     },
     {
@@ -29,4 +34,4 @@ UserSchema.pre('save', async function(next) {
     next(); 
 });
 
-export default mongoose.model('User', UserSchema); 
+module.exports = mongoose.model('User', UserSchema);

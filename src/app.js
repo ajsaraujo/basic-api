@@ -2,7 +2,7 @@ require('dotenv').config({
     path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
 }); 
 
-const bodyParser = require('body-parser');
+const bodyParser = require('body-parser'); 
 
 const mongoose = require('mongoose'); 
 const mongooseOptions = { useNewUrlParser: true, useUnifiedTopology: true }; 
@@ -29,8 +29,8 @@ app.use(bodyParser.json());
 const indexRoute = require('./routes/index');
 const userRoute = require('./routes/user');
 
-app.use('/', indexRoute);
-app.use('/user', userRoute);
+app.use('/api', indexRoute);
+app.use('/api/user', userRoute);
 
 app.listen(process.env.PORT);
 console.log(`A API está escutando na porta ${process.env.PORT}.`);
