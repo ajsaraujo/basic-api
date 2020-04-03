@@ -69,6 +69,31 @@ class UserController {
         
         return res.json(user); 
     }
+
+    async delete(req, res) {
+        const { email, name, password } = req.body; 
+
+        let requestBodyIsValid = updateSchema.isValid(req.body); 
+
+        if (!requestBodyIsValid) {
+            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
+        }
+
+        let user = await User.findOne({ email }); 
+        
+        if (!user) {
+            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
+        }
+
+        let response = {
+            message: 'Usuário deletado.',
+            id: user.id
+        }
+
+        user.remove(); 
+
+        return res.json(response); 
+    }
 }
 
 module.exports = new UserController();  
