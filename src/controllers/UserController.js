@@ -1,6 +1,11 @@
 const User = require('../models/User'); 
 const yup = require('yup'); 
 const bcrypt = require('bcrypt'); 
+const nodemailer = require('nodemailer'); 
+
+require('dotenv').config({
+    path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
+}); 
 
 const createSchema = yup.object().shape(
     {
@@ -126,6 +131,50 @@ class UserController {
             user.password = undefined; 
             return res.json(user); 
         }
+    }
+
+    async recoverPassword(req, res) {
+        const userEmail = req.body.email;
+
+        let requestBodyIsValid = updateSchema.isValid(req.body);
+
+        if (!requestBodyIsValid) {
+            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
+        }
+
+        let user = await User.findOne({ email: userEmail });
+
+        console.log(`User: ${user}`); 
+
+        if (!user) {
+            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
+        }
+
+        let transporter = nodemailer.createTransport({
+            service: process.env.EMAIL_SERVICE,
+            auth: {
+                user: process.env.EMAIL_ACCOUNT,
+                pass: process.env.EMAIL_PASS,
+            }
+        }); 
+
+        let mailOptions = {
+            from: process.env.EMAIL_ACCOUNT, 
+            to: userEmail, 
+            subject: '[BASIC API] Recuperação de senha',
+            html: '<p>Esqueceu sua senha?</p>',
+            text: 'Esqueceu sua senha?'
+        };
+
+        transporter.sendMail(mailOptions, function(error, info) {
+            if (error) {
+                console.log(error); 
+                return res.status(500).json({ error: 'Erro ao enviar e-mail.'});
+            } else {
+                console.log('Email enviado: ' + info.response); 
+                return res.status(200).json({ message: 'Email enviado.' }); 
+            }
+        });
     }
 }
 

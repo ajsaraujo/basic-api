@@ -8,7 +8,8 @@ router.put('/', UserController.update);
 router.delete('/', UserController.delete); 
 
 // Autenticação
-router.post('/auth', UserController.auth); 
+router.post('/auth', UserController.auth);
+router.post('/recover_password', UserController.recoverPassword);  
 
 module.exports = router;
 
