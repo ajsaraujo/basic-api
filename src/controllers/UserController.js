@@ -30,6 +30,24 @@ const authSchema = yup.object().shape(
     }
 );
 
+function generateRandomPassword() {
+    const minimumLength = 8; 
+    const addedLength = Math.floor(Math.random() * 5);
+    const length = minimumLength + addedLength; 
+    
+    const charset = 'abcdefghijklmnopqrstuvwxyz0123456789'; 
+    
+    let randomPassword = ''; 
+
+    for (let i = 0; i < length; i++) {
+        let randomIndex = Math.floor(Math.random() * charset.length); 
+        let randomChar = charset[randomIndex]; 
+        randomPassword += randomChar; 
+    }
+
+    return randomPassword; 
+}
+
 class UserController {
 
     async create(req, res) {
@@ -143,12 +161,16 @@ class UserController {
         }
 
         let user = await User.findOne({ email: userEmail });
-
-        console.log(`User: ${user}`); 
-
+        
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
         }
+        
+        const newRandomPassword = generateRandomPassword(); 
+        user.password = newRandomPassword; 
+        
+        user.password = newRandomPassword; 
+        user.save(); 
 
         let transporter = nodemailer.createTransport({
             service: process.env.EMAIL_SERVICE,
@@ -162,8 +184,12 @@ class UserController {
             from: process.env.EMAIL_ACCOUNT, 
             to: userEmail, 
             subject: '[BASIC API] Recuperação de senha',
-            html: '<p>Esqueceu sua senha?</p>',
-            text: 'Esqueceu sua senha?'
+            html: `
+            <p>Esqueceu sua senha?</p>
+            </br>
+            <p>Não se preocupe, a gente gerou uma nova senha pra você: ${newRandomPassword}</p>
+            `,
+            text: `Esqueceu sua senha? Não se preocupe, a gente gerou uma nova senha pra você: ${newRandomPassword}`
         };
 
         transporter.sendMail(mailOptions, function(error, info) {
