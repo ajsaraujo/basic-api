@@ -2,10 +2,16 @@ const User = require('../models/User');
 const yup = require('yup'); 
 const bcrypt = require('bcrypt'); 
 const nodemailer = require('nodemailer'); 
+const jwt = require('jsonwebtoken'); 
 
 require('dotenv').config({
     path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
 }); 
+
+// JsonWebToken 
+function createUserToken(userId) {
+    return jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRE_TIME });
+}
 
 const createSchema = yup.object().shape(
     {
@@ -68,7 +74,7 @@ class UserController {
         const newUser = await User.create(req.body); 
         newUser.password = undefined; 
 
-        return res.status(201).json(newUser); 
+        return res.status(201).json({ user: newUser, token: createUserToken(newUser.id) }); 
     }
 
     async update(req, res) {
@@ -147,11 +153,12 @@ class UserController {
             return res.status(409).json({ error: 'A autenticação falhou.' }); 
         } else {
             user.password = undefined; 
-            return res.json(user); 
+            return res.json({ user, token: createUserToken(user.id) }); 
         }
     }
 
     async recoverPassword(req, res) {
+
         const userEmail = req.body.email;
 
         let requestBodyIsValid = updateSchema.isValid(req.body);
