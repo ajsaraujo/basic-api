@@ -10,7 +10,7 @@ router.delete('/', authMiddleware, UserController.delete);
 
 // Autenticação
 router.post('/auth', UserController.auth);
-router.post('/recover_password', authMiddleware, UserController.recoverPassword);  
+router.post('/recover_password', UserController.recoverPassword);  
 
 module.exports = router;
 

@@ -91,6 +91,12 @@ class UserController {
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.'});
         }
+
+        const tokenId = res.locals.authData.id; 
+        
+        if (tokenId != user.id) {
+            return res.status(403).json({ error: 'Token referente a outro usuário.' }); 
+        }
         
         if (name) {
             user.name = name; 
@@ -120,6 +126,12 @@ class UserController {
         
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
+        }
+
+        const tokenId = res.locals.authData.id; 
+        
+        if (tokenId != user.id) {
+            return res.status(403).json({ error: 'Token referente a outro usuário.' }); 
         }
 
         let response = {
