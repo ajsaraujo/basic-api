@@ -4,12 +4,14 @@ require('dotenv').config({
 
 const bodyParser = require('body-parser'); 
 
+// Mongoose 
 const mongoose = require('mongoose'); 
 const mongooseOptions = { useNewUrlParser: true, useUnifiedTopology: true }; 
 const connectionString = process.env.DB_HOST + '/' + process.env.DB_NAME; 
 
 console.log(connectionString);
 mongoose.connect(connectionString, mongooseOptions);
+mongoose.set('useCreateIndex', true); 
 
 mongoose.connection.once('open', _ => {
     console.log('Aplicação conectada ao banco de dados.'); 
@@ -20,6 +22,7 @@ mongoose.connection.on('error', err => {
     console.log(err); 
 });
 
+// Express
 const express = require('express');
 const app = express();
 
@@ -33,6 +36,7 @@ app.use('/api', indexRoute);
 app.use('/api/user', userRoute);
 
 app.listen(process.env.PORT);
+
 console.log(`A API está escutando na porta ${process.env.PORT}.`);
 
 module.exports = app;
