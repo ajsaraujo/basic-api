@@ -1,7 +1,5 @@
 // Dependências externas 
-const yup = require('yup'); 
 const bcrypt = require('bcrypt'); 
-const nodemailer = require('nodemailer'); 
 
 // Models e Controllers
 const User = require('../models/User'); 
@@ -25,13 +23,26 @@ class UserController {
             return res.status(400).json({ error: 'Requisição com corpo inválido.'});
         }
 
-        const userExists = await User.findOne({ email });
+        let userExists; 
+        
+        try {
+            userExists = await User.findOne({ email });
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+        }
 
         if (userExists) {
             return res.status(409).json({ error: 'O e-mail informado já está em uso.' });
         }
 
-        const newUser = await User.create(req.body); 
+        try {
+            var newUser = await User.create(req.body); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao criar usuário.' }); 
+        }
+
         newUser.password = undefined; 
 
         return res.status(201).json({ user: newUser, token: TokenController.makeUserToken(newUser.id) }); 
@@ -46,7 +57,14 @@ class UserController {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
         }
 
-        let user = await User.findOne({ email }); 
+        let user; 
+        
+        try {
+            user = await User.findOne({ email }); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+        }
 
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.'});
@@ -66,7 +84,12 @@ class UserController {
             user.password = password; 
         }
 
-        await user.save(); 
+        try {
+            await user.save(); 
+        } catch (err) {
+            console.log(err); 
+            return res.status(500).json({ error: 'Erro ao salvar mudanças.' }); 
+        }
         
         user.password = undefined; 
         
@@ -82,7 +105,14 @@ class UserController {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
         }
 
-        let user = await User.findOne({ email }); 
+        let user; 
+
+        try {
+            user = await User.findOne({ email }); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao buscar usuário.'}); 
+        }
         
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
@@ -99,7 +129,12 @@ class UserController {
             id: user.id
         }
 
-        user.remove(); 
+        try {
+            await user.remove(); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao deletar usuário.' }); 
+        }
 
         return res.json(response); 
     }
@@ -113,7 +148,14 @@ class UserController {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
         }
 
-        let user = await User.findOne({ email }); 
+        let user; 
+
+        try {
+            user = await User.findOne({ email }); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao buscar usuário.' }); 
+        }
         
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
@@ -139,7 +181,14 @@ class UserController {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
         }
         
-        let user = await User.findOne({ email: userEmail });
+        let user; 
+
+        try {
+            user = await User.findOne({ email: userEmail });
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao buscar usuário.' }); 
+        }
         
         if (!user) {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
@@ -147,8 +196,14 @@ class UserController {
         
         const newRandomPassword = PasswordController.makeRandomPassword(); 
 
-        user.password = newRandomPassword; 
-        user.save(); 
+        user.password = newRandomPassword;
+        
+        try {
+            user.save(); 
+        } catch (err) {
+            console.log('ERRO: ' + err); 
+            return res.status(500).json({ error: 'Erro ao mudar senha do usuário.' }); 
+        }
 
         EmailController.sendRecoveryEmail(user.email, newRandomPassword, function(err, info) {
             if (err) {
