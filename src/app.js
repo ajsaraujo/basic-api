@@ -26,6 +26,18 @@ mongoose.connection.on('error', err => {
 const express = require('express');
 const app = express();
 
+// SlowDown
+const slowDown = require('express-slow-down'); 
+
+const speedLimiter = slowDown({
+    windowMs: 15 * 60 * 1000, // A cada 15 minutos 
+    delayAfter: 45, // Permite 45 requests 
+    delayMs: 100 // Depois disso, atrase 100ms incrementalmente
+}); 
+
+app.enable('trust proxy'); 
+app.use(speedLimiter);
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
