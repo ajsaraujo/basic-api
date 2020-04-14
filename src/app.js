@@ -6,8 +6,12 @@ const bodyParser = require('body-parser');
 
 // Mongoose 
 const mongoose = require('mongoose'); 
-const mongooseOptions = { useNewUrlParser: true, useUnifiedTopology: true }; 
 const connectionString = process.env.DB_HOST + '/' + process.env.DB_NAME; 
+const mongooseOptions = { 
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useFindAndModify: false 
+}; 
 
 console.log(connectionString);
 mongoose.connect(connectionString, mongooseOptions);

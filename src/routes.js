@@ -10,8 +10,8 @@ Router.get('/', (req, res) => res.send('Olá!'));
 
 // User CRUD operations 
 Router.post('/users', emailInUse, UserController.create);
-Router.put('/users', auth, UserController.update);
-Router.delete('/users', auth, UserController.delete);
+Router.put('/users/:userId', auth, UserController.update);
+Router.delete('/users/:userId', auth, UserController.delete);
 
 // Account
 Router.post('/account/recover', emailInUse, UserController.recoverPassword);

@@ -11,80 +11,48 @@ require('dotenv').config({
 }); 
 
 class UserController {
-    async create(req, res) {
-        try {
-            let requestIsValid = ValidationHelper.validateUser(req.body, {
-                name: true,
-                email: true,
-                password: true
-            });
+    async create(req, res) { 
+        const requiredFields = {
+            name: true,
+            email: true,
+            password: true
+        };
+        const requestIsValid = ValidationHelper
+            .validateUser(req.body, requiredFields);
 
-            if (!requestIsValid) {
-                return res.status(400).json({ error: 'Request with invalid body.' });
-            }
-
-            if (req.emailInUse) {
-                return res.status(409).json({ error: 'Email already in use.' });
-            }
-
-            const user = await User.create(req.body);
-            
-            return res.status(201).json(
-                { user, token: TokenHelper.makeUserToken(user.id) }
-            );
-        } catch (err) {
-            return res.status(500).json({ error: err.message });
+        if (!requestIsValid) {
+            return res.status(400).json({ error: 'Invalid request body.' });
         }
+
+        if (req.emailInUse) {
+            return res.status(409).json({ error: 'Email already in use.' });
+        }
+
+        const user = await User.create(req.body);
+            
+        return res.status(201).json(
+            { user, token: TokenHelper.makeUserToken(user.id) }
+        );
     }
     
     async update(req, res) {
-        const { email, name, password } = req.body; 
-
-        let requestBodyIsValid = ValidationHelper.validateUser(req.body, {
-            email: true
-        });
-
+        const requestBodyIsValid = ValidationHelper.validateUser(req.body);
+        
         if (!requestBodyIsValid) {
-            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
+            return res.status(400).json({ error: 'Invalid request body.' });
         }
-
-        let user; 
         
-        try {
-            user = await User.findOne({ email }); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao buscar usuário.' });
-        }
-
-        if (!user) {
-            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.'});
-        }
-
         const tokenId = res.locals.authData.id; 
-        
-        if (tokenId != user.id) {
-            return res.status(403).json({ error: 'Token referente a outro usuário.' }); 
-        }
-        
-        if (name) {
-            user.name = name; 
+        const userId = req.params.userId; 
+
+        if (tokenId !== userId) {
+            return res.status(403).json({ error: 'Token belongs to another user.' });
         }
 
-        if (password) {
-            user.password = password; 
-        }
-
-        try {
-            await user.save(); 
-        } catch (err) {
-            console.log(err); 
-            return res.status(500).json({ error: 'Erro ao salvar mudanças.' }); 
-        }
+        const user = await User.findByIdAndUpdate(userId, req.body);
+        user.save();
         
-        user.password = undefined; 
-        
-        return res.json(user); 
+        return res.status(200).json(user);
     }
 
     async delete(req, res) {
