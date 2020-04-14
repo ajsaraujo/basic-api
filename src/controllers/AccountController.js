@@ -8,37 +8,33 @@ const EmailHelper = require('../helpers/email');
 const TokenHelper = require('../helpers/token');
 
 class AccountController {
-        async auth(req, res) {
-        const { email, password } = req.body; 
-        
+    async auth(req, res) {
         const requiredFields = { email: true, password: true };
-        const requestBodyIsValid = ValidationHelper.validateUser(req.body, requiredFields); 
-
-        if (!requestBodyIsValid) {
-            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
-        }
-
-        let user; 
-
-        try {
-            user = await User.findOne({ email }); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao buscar usuário.' }); 
-        }
+        const requestBodyIsValid = ValidationHelper
+            .validateUser(req.body, requiredFields); 
         
-        if (!user) {
-            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
+        if (!requestBodyIsValid) {
+            return res.status(400).json({ error: 'Invalid request body.' });
         }
 
-        let passwordIsCorrect = await bcrypt.compare(password, user.password); 
-    
-        if (!passwordIsCorrect) {
-            return res.status(409).json({ error: 'A autenticação falhou.' }); 
-        } else {
-            user.password = undefined; 
-            return res.json({ user, token: TokenHelper.makeUserToken(user.id) }); 
+        const { email, password } = req.body;
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
         }
+
+        const passwordIsOk = await bcrypt.compare(password, user.password);
+
+        if (passwordIsOk) {
+            user.password = undefined; 
+            return res.status(200).json({ 
+                user, 
+                token: TokenHelper.makeUserToken()
+            });
+        }
+
+        return res.status(409).json({ error: 'Wrong password.' }); 
     }
 
     async recoverPassword(req, res) {
