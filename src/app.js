@@ -41,11 +41,9 @@ app.use(speedLimiter);
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-const indexRoute = require('./routes/index');
-const userRoute = require('./routes/user');
+const routes = require('./routes');
 
-app.use('/api', indexRoute);
-app.use('/api/user', userRoute);
+app.use('/api', routes);
 
 app.listen(process.env.PORT);
 

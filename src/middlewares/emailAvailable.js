@@ -9,3 +9,5 @@ const emailIsUsed = (req, res, next) => {
         return res.status(500).json({ error: 'Error searching user'})
     }
 }
+
+module.exports = emailIsUsed;
