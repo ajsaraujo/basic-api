@@ -1,6 +1,6 @@
 const yup = require('yup'); 
 
-class RequestValidationController {
+class ValidationHelper {
     nameEmailAndPassword = (req) => yup.object().shape(
         {
             name: yup.string().required(),
@@ -25,4 +25,4 @@ class RequestValidationController {
     ).isValid(req); 
 }
 
-module.exports = new RequestValidationController(); 
+module.exports = new ValidationHelper(); 

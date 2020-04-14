@@ -1,5 +1,4 @@
-class PasswordController {
-    
+class PasswordHelper {
     makeRandomPassword() {
         const minimumLength = 8; 
         const addedLength = Math.floor(Math.random() * 5);
@@ -20,4 +19,4 @@ class PasswordController {
 
 }
 
-module.exports = new PasswordController(); 
+module.exports = new PasswordHelper(); 

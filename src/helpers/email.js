@@ -4,8 +4,7 @@ require('dotenv').config({
 
 const nodemailer = require('nodemailer'); 
 
-class EmailController {
-    
+class EmailHelper {
     sendRecoveryEmail(receiverEmail, newRandomPassword, callback) {
         let transporter = nodemailer.createTransport({
             service: process.env.EMAIL_SERVICE,
@@ -31,4 +30,4 @@ class EmailController {
     }
 }
 
-module.exports = new EmailController(); 
+module.exports = new EmailHelper(); 

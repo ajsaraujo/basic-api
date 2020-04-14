@@ -1,12 +1,12 @@
 // Dependências externas 
 const bcrypt = require('bcrypt'); 
 
-// Models e Controllers
+// Models e Helpers
 const User = require('../models/User'); 
-const PasswordController = require('./PasswordController'); 
-const TokenController = require('./TokenController'); 
-const Validator = require('./RequestValidationController'); 
-const EmailController = require('./EmailController'); 
+const PasswordHelper = require('../helpers/password'); 
+const TokenHelper = require('../helpers/token'); 
+const ValidationHelper = require('../helpers/validation'); 
+const EmailHelper = require('../helpers/email'); 
 
 require('dotenv').config({
     path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
@@ -17,7 +17,7 @@ class UserController {
     async create(req, res) {
         const email = req.body.email; 
 
-        let requestBodyIsValid = Validator.nameEmailAndPassword(req.body); 
+        let requestBodyIsValid = ValidationHelper.nameEmailAndPassword(req.body); 
         
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.'});
@@ -45,13 +45,13 @@ class UserController {
 
         newUser.password = undefined; 
 
-        return res.status(201).json({ user: newUser, token: TokenController.makeUserToken(newUser.id) }); 
+        return res.status(201).json({ user: newUser, token: TokenHelper.makeUserToken(newUser.id) }); 
     }
 
     async update(req, res) {
         const { email, name, password } = req.body; 
 
-        let requestBodyIsValid = Validator.onlyEmail(req.body);
+        let requestBodyIsValid = ValidationHelper.onlyEmail(req.body);
 
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
@@ -99,7 +99,7 @@ class UserController {
     async delete(req, res) {
         const { email } = req.body; 
 
-        let requestBodyIsValid = Validator.onlyEmail(req.body); 
+        let requestBodyIsValid = ValidationHelper.onlyEmail(req.body); 
 
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
@@ -142,7 +142,7 @@ class UserController {
     async auth(req, res) {
         const { email, password } = req.body; 
 
-        let requestBodyIsValid = Validator.emailAndPassword(req.body); 
+        let requestBodyIsValid = ValidationHelper.emailAndPassword(req.body); 
 
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
@@ -167,7 +167,7 @@ class UserController {
             return res.status(409).json({ error: 'A autenticação falhou.' }); 
         } else {
             user.password = undefined; 
-            return res.json({ user, token: TokenController.makeUserToken(user.id) }); 
+            return res.json({ user, token: TokenHelper.makeUserToken(user.id) }); 
         }
     }
 
@@ -175,7 +175,7 @@ class UserController {
 
         const userEmail = req.body.email;
         
-        let requestBodyIsValid = Validator.onlyEmail(req.body);
+        let requestBodyIsValid = ValidationHelper.onlyEmail(req.body);
         
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
@@ -194,7 +194,7 @@ class UserController {
             return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
         }
         
-        const newRandomPassword = PasswordController.makeRandomPassword(); 
+        const newRandomPassword = PasswordHelper.makeRandomPassword(); 
 
         user.password = newRandomPassword;
         
@@ -205,7 +205,7 @@ class UserController {
             return res.status(500).json({ error: 'Erro ao mudar senha do usuário.' }); 
         }
 
-        EmailController.sendRecoveryEmail(user.email, newRandomPassword, function(err, info) {
+        EmailHelper.sendRecoveryEmail(user.email, newRandomPassword, function(err, info) {
             if (err) {
                 console.log(err);
                 return res.status(500).json({ error: 'Erro ao enviar email.' }); 
