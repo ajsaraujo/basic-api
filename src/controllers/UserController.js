@@ -13,7 +13,11 @@ require('dotenv').config({
 class UserController {
     async create(req, res) {
         try {
-            let requestIsValid = ValidationHelper.nameEmailAndPassword(req.body);
+            let requestIsValid = ValidationHelper.validateUser(req.body, {
+                name: true,
+                email: true,
+                password: true
+            });
 
             if (!requestIsValid) {
                 return res.status(400).json({ error: 'Request with invalid body.' });
@@ -25,8 +29,9 @@ class UserController {
 
             const user = await User.create(req.body);
             
-            return res.status(201).json(user);
-
+            return res.status(201).json(
+                { user, token: TokenHelper.makeUserToken(user.id) }
+            );
         } catch (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -35,7 +40,9 @@ class UserController {
     async update(req, res) {
         const { email, name, password } = req.body; 
 
-        let requestBodyIsValid = ValidationHelper.onlyEmail(req.body);
+        let requestBodyIsValid = ValidationHelper.validateUser(req.body, {
+            email: true
+        });
 
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 

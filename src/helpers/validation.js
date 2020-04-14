@@ -1,28 +1,15 @@
 const yup = require('yup'); 
 
 class ValidationHelper { 
-    nameEmailAndPassword = (req) => yup.object().shape(
+    validateUser = (obj, fieldsRequired) => yup.object().shape(
         {
-            name: yup.string().required(),
-            email: yup.string().required().email(),
-            password: yup.string().required()
+            name: fieldsRequired.name ? yup.string().required() : yup.string(),
+            email: fieldsRequired.email ? yup.string().required().email() 
+                : yup.string().email(),
+            password: fieldsRequired.password ? yup.string().required()
+                : yup.string()
         }
-    ).isValid(req); 
-
-    onlyEmail = (req) => yup.object().shape(
-        {
-            name: yup.string(),
-            email: yup.string().required().email(),
-            password: yup.string()
-        }
-    ).isValid(req);
-
-    emailAndPassword = (req) => yup.object().shape(
-        {
-            email: yup.string().required().email(),
-            password: yup.string().required()
-        }
-    ).isValid(req); 
+    ).isValid(obj);
 }
 
 module.exports = new ValidationHelper(); 
