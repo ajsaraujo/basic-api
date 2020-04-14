@@ -4,12 +4,12 @@ const auth = (req, res, next) => {
     const tokenHeader = req.headers.auth; 
 
     if (!tokenHeader) {
-        return res.status(401).send({ error: 'Requisição sem token.' });
+        return res.status(401).send({ error: 'No token provided.' });
     }
 
     jwt.verify(tokenHeader, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(401).send({ error: 'Token inválido.' });
+            return res.status(401).send({ error: 'Invalid token.' });
         } else {
             res.locals.authData = decoded;
             return next(); 

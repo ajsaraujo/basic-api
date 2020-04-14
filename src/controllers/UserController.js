@@ -1,7 +1,5 @@
-// Dependências externas 
 const bcrypt = require('bcrypt'); 
 
-// Models e Helpers
 const User = require('../models/User'); 
 const PasswordHelper = require('../helpers/password'); 
 const TokenHelper = require('../helpers/token'); 
@@ -13,41 +11,27 @@ require('dotenv').config({
 }); 
 
 class UserController {
-
     async create(req, res) {
-        const email = req.body.email; 
-
-        let requestBodyIsValid = ValidationHelper.nameEmailAndPassword(req.body); 
-        
-        if (!requestBodyIsValid) {
-            return res.status(400).json({ error: 'Requisição com corpo inválido.'});
-        }
-
-        let userExists; 
-        
         try {
-            userExists = await User.findOne({ email });
+            let requestIsValid = ValidationHelper.nameEmailAndPassword(req.body);
+
+            if (!requestIsValid) {
+                return res.status(400).json({ error: 'Request with invalid body.' });
+            }
+
+            if (req.emailInUse) {
+                return res.status(409).json({ error: 'Email already in use.' });
+            }
+
+            const user = await User.create(req.body);
+            
+            return res.status(201).json(user);
+
         } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao buscar usuário.' });
+            return res.status(500).json({ error: err.message });
         }
-
-        if (userExists) {
-            return res.status(409).json({ error: 'O e-mail informado já está em uso.' });
-        }
-
-        try {
-            var newUser = await User.create(req.body); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao criar usuário.' }); 
-        }
-
-        newUser.password = undefined; 
-
-        return res.status(201).json({ user: newUser, token: TokenHelper.makeUserToken(newUser.id) }); 
     }
-
+    
     async update(req, res) {
         const { email, name, password } = req.body; 
 

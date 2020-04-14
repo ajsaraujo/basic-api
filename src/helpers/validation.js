@@ -1,6 +1,6 @@
 const yup = require('yup'); 
 
-class ValidationHelper {
+class ValidationHelper { 
     nameEmailAndPassword = (req) => yup.object().shape(
         {
             name: yup.string().required(),

@@ -46,7 +46,6 @@ const routes = require('./routes');
 app.use('/api', routes);
 
 app.listen(process.env.PORT);
-
 console.log(`A API está escutando na porta ${process.env.PORT}.`);
 
 module.exports = app;
