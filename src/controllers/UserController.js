@@ -50,52 +50,31 @@ class UserController {
         }
 
         const user = await User.findByIdAndUpdate(userId, req.body);
-        user.save();
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        await user.save();
         
         return res.status(200).json(user);
     }
 
     async delete(req, res) {
-        const { email } = req.body; 
+        const userId = req.params.userId;
+        const tokenId = res.locals.authData.id;
 
-        let requestBodyIsValid = ValidationHelper.onlyEmail(req.body); 
-
-        if (!requestBodyIsValid) {
-            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
+        if (userId !== tokenId) {
+            return res.status(403).json({ error: 'Token belongs to another user.' });
         }
 
-        let user; 
+        const user = await User.findByIdAndDelete(userId);
 
-        try {
-            user = await User.findOne({ email }); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao buscar usuário.'}); 
-        }
-        
         if (!user) {
-            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
+            return res.status(404).json({ error: 'User not found.' });
         }
-
-        const tokenId = res.locals.authData.id; 
         
-        if (tokenId != user.id) {
-            return res.status(403).json({ error: 'Token referente a outro usuário.' }); 
-        }
-
-        let response = {
-            message: 'Usuário deletado.',
-            id: user.id
-        }
-
-        try {
-            await user.remove(); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao deletar usuário.' }); 
-        }
-
-        return res.json(response); 
+        return res.status(200).json(user);
     }
 
     async auth(req, res) {
