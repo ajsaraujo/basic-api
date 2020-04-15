@@ -38,49 +38,31 @@ class AccountController {
     }
 
     async recoverPassword(req, res) {
+        const requiredFields = { email: true }; 
+        const requestBodyIsValid = ValidationHelper
+            .validateUser(req.body, requiredFields);
 
-        const userEmail = req.body.email;
-        const requiredFields = { email: true };
-        let requestBodyIsValid = ValidationHelper.validateUser(req.body, requiredFields);
-        
         if (!requestBodyIsValid) {
-            return res.status(400).json({ error: 'Requisição com corpo inválido.' }); 
+            return res.status(400).json({ error: 'Invalid request body.' });
         }
         
-        let user; 
+        const { email } = req.body;
+        const user = await User.findOne({ email });
 
-        try {
-            user = await User.findOne({ email: userEmail });
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao buscar usuário.' }); 
-        }
-        
-        if (!user) {
-            return res.status(409).json({ error: 'O e-mail informado não está associado a nenhuma conta.' });
-        }
-        
-        const newRandomPassword = PasswordHelper.makeRandomPassword(); 
-
+        const newRandomPassword = PasswordHelper.makeRandomPassword();
         user.password = newRandomPassword;
-        
-        try {
-            user.save(); 
-        } catch (err) {
-            console.log('ERRO: ' + err); 
-            return res.status(500).json({ error: 'Erro ao mudar senha do usuário.' }); 
-        }
+        await user.save();
 
         EmailHelper.sendRecoveryEmail(user.email, newRandomPassword, function(err, info) {
             if (err) {
                 console.log(err);
-                return res.status(500).json({ error: 'Erro ao enviar email.' }); 
+                return res.status(500).json({ error: 'Error sending email.' }); 
             } else {
                 console.log('Mensagem enviada: ' + info.response);
-                return res.json({ message: 'Email enviado.' }); 
+                return res.json({ message: 'Email sent.' }); 
             }
         }); 
-    }    
+    }
 }
 
 module.exports = new AccountController();
