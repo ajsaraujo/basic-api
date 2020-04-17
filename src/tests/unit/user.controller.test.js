@@ -18,11 +18,17 @@ beforeEach(() => {
 jest.mock('../../models/User');
 
 const newUser = {
-    name: 'John Q. Public',
+    name: 'John Q Public',
     email: 'johnq@public.com',
     password: 'johnqpublic',
     id: '45878e7erw78a8'
 }
+
+const updatingUser = {
+    name: 'John Queue Public',
+    password: 'johnqueuepublic', 
+    id: '5e99b5a66b38ec5329f750af'
+};
 
 describe('UserController.createUser', () => {
     beforeEach(() => { 
@@ -42,12 +48,18 @@ describe('UserController.createUser', () => {
         await UserController.createUser(req, res); 
         expect(res.statusCode).toBe(400);
     });
-    it('should return 400 on request body with invalid entries', async () => {
+    it('should return 400 on request body with invalid entries (1)', async () => {
         req.body.email = 'I\'m not an email';
         await UserController.createUser(req, res);
         expect(res.statusCode).toBe(400);
         req.body.email = 'johnq@public.com';
     });
+    it('should return 400 on request body with invalid entries (2)', async () => {
+        req.body.name = 41; // Not the answer!
+        await UserController.createUser(req, res);
+        expect(res.statusCode).toBe(400);
+        req.body.name = 'John Q Public';
+    })
     it('should return 409 if email is already in use', async () => {
         req.emailInUse = true;
         await UserController.createUser(req, res);
@@ -59,4 +71,28 @@ describe('UserController.createUser', () => {
         expect(res._isEndCalled()).toBeTruthy();
         expect(res._getJSONData()).toStrictEqual(newUser);
     });
+});
+
+describe('UserController.updateUser', () => {
+    beforeEach(() => {
+        req.body = updatingUser;
+    });
+    it('should return 400 on request body with email', async () => {
+        req.body = newUser;
+        await UserController.updateUser(req, res);
+        expect(res.statusCode).toBe(400);
+    });
+    it('should return 400 on request body with invalid entries (1)', async () => {
+        req.body.name = 'name_lastname';
+        await UserController.updateUser(req, res);
+        expect(res.statusCode).toBe(400);
+        req.body.name = 'John Queue Public';
+    });
+    it('should return 400 on request body with invalid entries (2)', async () => {
+        req.body.name = 41; // Still not the answer
+        await UserController.updateUser(req, res);
+        expect(res.statusCode).toBe(400);
+        req.body.name = 'John Queue Public';
+    });
+    
 });

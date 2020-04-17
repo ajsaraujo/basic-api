@@ -32,6 +32,10 @@ class UserController {
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Invalid request body.' });
         }
+
+        if (req.body.email) {
+            return res.status(400).json({ error: 'Email changing is not allowed.' });
+        }
         
         const tokenId = res.locals.authData.id; 
         const userId = req.params.userId; 

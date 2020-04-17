@@ -4,7 +4,7 @@
   "description": "A basic Node.js API",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll --setupFiles dotenv/config"
   },
   "repository": {
     "type": "git",
@@ -32,5 +32,11 @@
     "mongoose": "^5.9.7",
     "nodemailer": "^6.4.6",
     "yup": "^0.28.3"
+  },
+  "devDependencies": {
+    "jest": "^25.3.0",
+    "mongodb-memory-server": "^6.5.2",
+    "node-mocks-http": "^1.8.1",
+    "supertest": "^4.0.2"
   }
 }
