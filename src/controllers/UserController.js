@@ -1,23 +1,16 @@
-const bcrypt = require('bcrypt'); 
-
 const User = require('../models/User'); 
-const PasswordHelper = require('../helpers/password'); 
 const TokenHelper = require('../helpers/token'); 
 const ValidationHelper = require('../helpers/validation'); 
-const EmailHelper = require('../helpers/email'); 
-
-require('dotenv').config({
-    path: process.env.NODE_ENV === 'test' ? '../.env.test' : '../.env',
-}); 
 
 class UserController {
-    async create(req, res) { 
+    async createUser(req, res) { 
         const requiredFields = {
             name: true,
             email: true,
             password: true
         };
-        const requestIsValid = ValidationHelper
+
+        const requestIsValid = await ValidationHelper
             .validateUser(req.body, requiredFields);
 
         if (!requestIsValid) {
@@ -30,13 +23,11 @@ class UserController {
 
         const user = await User.create(req.body);
             
-        return res.status(201).json(
-            { user, token: TokenHelper.makeUserToken(user.id) }
-        );
+        return res.status(201).json(user);
     }
     
-    async update(req, res) {
-        const requestBodyIsValid = ValidationHelper.validateUser(req.body);
+    async updateUser(req, res) {
+        const requestBodyIsValid = await ValidationHelper.validateUser(req.body);
         
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Invalid request body.' });
@@ -60,7 +51,7 @@ class UserController {
         return res.status(200).json(user);
     }
 
-    async delete(req, res) {
+    async deleteUser(req, res) {
         const userId = req.params.userId;
         const tokenId = res.locals.authData.id;
 

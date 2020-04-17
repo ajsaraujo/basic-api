@@ -1,13 +1,11 @@
-require('dotenv').config({
-    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
-}); 
+require('dotenv').config({ path: '.env' }); 
 
 const bodyParser = require('body-parser'); 
 const slowDown = require('express-slow-down'); 
 const express = require('express');
 
 const routes = require('./routes');
-require('./database'); 
+require('./database/database');
 
 const app = express();
 

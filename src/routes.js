@@ -13,9 +13,9 @@ const emailInUse = require('./middlewares/emailInUse');
 Router.get('/', (req, res) => res.send('Olá!'));
 
 // User CRUD operations 
-Router.post('/users', emailInUse, UserController.create);
-Router.put('/users/:userId', auth, UserController.update);
-Router.delete('/users/:userId', auth, UserController.delete);
+Router.post('/users', emailInUse, UserController.createUser);
+Router.put('/users/:userId', auth, UserController.updateUser);
+Router.delete('/users/:userId', auth, UserController.deleteUser);
 
 // Account
 Router.post('/account/recover', emailInUse, AccountController.recoverPassword);
