@@ -1,12 +1,9 @@
+console.log(`Comparando ${password} e ${user.password}`);
 const httpMocks = require('node-mocks-http');
 
 const UserController = require('../../controllers/UserController');
 const User = require('../../models/User');
-<<<<<<< HEAD
-
-=======
 const ValidationHelper = require('../../helpers/validation');
->>>>>>> dev
 
 let req, res, next; 
 
@@ -80,8 +77,6 @@ describe('UserController.createUser', () => {
 describe('UserController.updateUser', () => {
     beforeEach(() => {
         req.body = updatingUser;
-<<<<<<< HEAD
-=======
         req.params.userId = '5e99b5a66b38ec5329f750af';
     });
     it('should have an updateUser function', () => {
@@ -90,7 +85,6 @@ describe('UserController.updateUser', () => {
     it('should call User.findByIdAndUpdate', async () => {
         await UserController.updateUser(req, res);
         expect(User.findByIdAndUpdate).toBeCalledWith(req.params.userId, updatingUser);
->>>>>>> dev
     });
     it('should return 400 on request body with email', async () => {
         req.body = newUser;
@@ -109,14 +103,11 @@ describe('UserController.updateUser', () => {
         expect(res.statusCode).toBe(400);
         req.body.name = 'John Queue Public';
     });
-<<<<<<< HEAD
-=======
     it('should return 200 and user', async () => {
         User.findByIdAndUpdate.mockReturnValue(updatingUser);
         await UserController.updateUser(req, res);
         expect(res._getJSONData()).toStrictEqual(updatingUser);
         expect(res._isEndCalled()).toBeTruthy();
     })
->>>>>>> dev
     
 });
