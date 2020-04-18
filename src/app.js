@@ -1,11 +1,30 @@
+<<<<<<< HEAD
 require('dotenv').config({ path: '.env' }); 
+=======
+<<<<<<< Updated upstream
+require('dotenv').config({
+    path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
+}); 
+=======
+>>>>>>> Stashed changes
+>>>>>>> dev
 
 const bodyParser = require('body-parser'); 
 const slowDown = require('express-slow-down'); 
 const express = require('express');
 
 const routes = require('./routes');
+<<<<<<< HEAD
 require('./database/database');
+=======
+<<<<<<< Updated upstream
+require('./database'); 
+=======
+
+require('dotenv').config(); 
+require('./database/database');
+>>>>>>> Stashed changes
+>>>>>>> dev
 
 const app = express();
 
