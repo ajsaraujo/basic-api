@@ -42,32 +42,20 @@ class UserController {
             return res.status(400).json({ error: 'Invalid request body.' });
         }
         
-        const tokenId = res.locals.authData.id; 
-        const userId = req.params.userId; 
-
-        if (tokenId !== userId) {
-            return res.status(403).json({ error: 'Token belongs to another user.' });
-        }
-
-        const user = await User.findByIdAndUpdate(userId, req.body);
+        let user = await User.findById(req.params.userId);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
 
-        await user.save();
-        
+        user.name = req.body.name || user.name; 
+        user.password = req.body.password || user.password;
+        user = await user.save();
+
         return res.status(200).json(user);
     }
 
-    async delete(req, res) {
-        const userId = req.params.userId;
-        const tokenId = res.locals.authData.id;
-
-        if (userId !== tokenId) {
-            return res.status(403).json({ error: 'Token belongs to another user.' });
-        }
-
+    async deleteUser(req, res) {
         const user = await User.findByIdAndDelete(userId);
 
         if (!user) {

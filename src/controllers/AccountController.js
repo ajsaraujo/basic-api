@@ -30,7 +30,7 @@ class AccountController {
             user.password = undefined; 
             return res.status(200).json({ 
                 user, 
-                token: TokenHelper.makeUserToken()
+                token: TokenHelper.makeUserToken(user.id)
             });
         }
 
