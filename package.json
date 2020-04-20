@@ -3,8 +3,11 @@
   "version": "1.0.0",
   "description": "A basic Node.js API",
   "main": "app.js",
+  "jest": {
+    "testEnvironment": "node"
+  },
   "scripts": {
-    "test": "jest --watchAll --setupFiles dotenv/config"
+    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",

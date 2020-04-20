@@ -1,22 +1,20 @@
-console.log(`Comparando ${password} e ${user.password}`);
 const httpMocks = require('node-mocks-http');
 
 const UserController = require('../../controllers/UserController');
 const User = require('../../models/User');
-const ValidationHelper = require('../../helpers/validation');
 
 let req, res, next; 
+
+require('dotenv').config();
 
 beforeEach(() => {
     req = httpMocks.createRequest();
     res = httpMocks.createResponse();
     next = jest.fn();
-
-    process.env.JWT_SECRET = 'segredo';
-    process.env.JWT_EXPIRE_TIME = '7d';
 });
 
 jest.mock('../../models/User');
+User.prototype.save = jest.fn();
 
 const newUser = {
     name: 'John Q Public',
@@ -31,16 +29,22 @@ const updatingUser = {
     id: '5e99b5a66b38ec5329f750af'
 };
 
+const userDoc = new User(newUser);
+
 describe('UserController.createUser', () => {
-    beforeEach(() => { 
-        req.body = newUser; 
+    beforeEach(() => {
+        // Assignment by copy 
+        req.body = {};
+        for (let key in newUser) {
+            req.body[key] = newUser[key];
+        }
+
         req.emailInUse = false;
     });
     it('should have a createUser function', () => {
         expect(typeof UserController.createUser).toBe('function');
     });
     it('should call User.create', async () => {
-        User.create.mockReturnValue(newUser);
         await UserController.createUser(req, res);
         expect(User.create).toBeCalledWith(newUser);
     });
@@ -50,16 +54,14 @@ describe('UserController.createUser', () => {
         expect(res.statusCode).toBe(400);
     });
     it('should return 400 on request body with invalid entries (1)', async () => {
-        req.body.email = 'I\'m not an email';
+        req.body.email = 'This is not an email';
         await UserController.createUser(req, res);
         expect(res.statusCode).toBe(400);
-        req.body.email = 'johnq@public.com';
     });
     it('should return 400 on request body with invalid entries (2)', async () => {
         req.body.name = 41; // Not the answer!
         await UserController.createUser(req, res);
         expect(res.statusCode).toBe(400);
-        req.body.name = 'John Q Public';
     })
     it('should return 409 if email is already in use', async () => {
         req.emailInUse = true;
@@ -67,6 +69,7 @@ describe('UserController.createUser', () => {
         expect(res.statusCode).toBe(409);
     });
     it('should return 201 and user', async () => {
+        User.create.mockReturnValue(newUser);
         await UserController.createUser(req, res);
         expect(res.statusCode).toBe(201);
         expect(res._isEndCalled()).toBeTruthy();
@@ -76,38 +79,36 @@ describe('UserController.createUser', () => {
 
 describe('UserController.updateUser', () => {
     beforeEach(() => {
-        req.body = updatingUser;
+        req.body = {};
+        for (let key in updatingUser) {
+            req.body[key] = updatingUser[key];
+        };
         req.params.userId = '5e99b5a66b38ec5329f750af';
     });
     it('should have an updateUser function', () => {
         expect(typeof UserController.updateUser).toBe('function');
     });
-    it('should call User.findByIdAndUpdate', async () => {
+    it('should call User.findById', async () => {
         await UserController.updateUser(req, res);
-        expect(User.findByIdAndUpdate).toBeCalledWith(req.params.userId, updatingUser);
-    });
-    it('should return 400 on request body with email', async () => {
-        req.body = newUser;
-        await UserController.updateUser(req, res);
-        expect(res.statusCode).toBe(400);
+        expect(User.findById).toBeCalledWith(req.params.userId);
     });
     it('should return 400 on request body with invalid entries (1)', async () => {
-        req.body.name = 'name_lastname';
+        req.body.name = 'peter_pan';
         await UserController.updateUser(req, res);
         expect(res.statusCode).toBe(400);
-        req.body.name = 'John Queue Public';
     });
     it('should return 400 on request body with invalid entries (2)', async () => {
         req.body.name = 41; // Still not the answer
         await UserController.updateUser(req, res);
         expect(res.statusCode).toBe(400);
-        req.body.name = 'John Queue Public';
     });
     it('should return 200 and user', async () => {
-        User.findByIdAndUpdate.mockReturnValue(updatingUser);
+        // This could be better
+        User.findById.mockReturnValue(userDoc);
+        User.prototype.save.mockReturnValue(updatingUser);
         await UserController.updateUser(req, res);
         expect(res._getJSONData()).toStrictEqual(updatingUser);
         expect(res._isEndCalled()).toBeTruthy();
-    })
+    });
     
 });

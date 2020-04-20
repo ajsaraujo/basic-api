@@ -33,20 +33,19 @@ class UserController {
             return res.status(400).json({ error: 'Invalid request body.' });
         }
 
-        if (req.body.email) {
-            return res.status(400).json({ error: 'Email changing is not allowed.' });
-        }
-        
         let user = await User.findById(req.params.userId);
-
+        
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });
         }
 
         user.name = req.body.name || user.name; 
         user.password = req.body.password || user.password;
+        
         user = await user.save();
 
+        console.log(user);
+        
         return res.status(200).json(user);
     }
 
