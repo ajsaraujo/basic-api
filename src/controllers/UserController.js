@@ -45,12 +45,12 @@ class UserController {
         user = await user.save();
 
         console.log(user);
-        
+
         return res.status(200).json(user);
     }
 
     async deleteUser(req, res) {
-        const user = await User.findByIdAndDelete(userId);
+        const user = await User.findByIdAndDelete(req.params.userId);
 
         if (!user) {
             return res.status(404).json({ error: 'User not found.' });

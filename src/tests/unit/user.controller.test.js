@@ -29,6 +29,12 @@ const updatingUser = {
     id: '5e99b5a66b38ec5329f750af'
 };
 
+const goneUser = {
+    name: 'Mr Deceased',
+    password: 'hesdead',
+    id: '5e99b5f98s38ec5329f750af'
+}
+
 const userDoc = new User(newUser);
 
 describe('UserController.createUser', () => {
@@ -110,5 +116,27 @@ describe('UserController.updateUser', () => {
         expect(res._getJSONData()).toStrictEqual(updatingUser);
         expect(res._isEndCalled()).toBeTruthy();
     });
-    
+    describe('UserController.deleteUser', () => {
+        beforeEach(() => {
+            req.params.userId = '5e99b5a66b38ec5329f750af';
+        });
+        it('should have a UserController.deleteUser function', () => {
+            expect(typeof UserController.deleteUser).toBe('function');
+        });
+        it('should call User.findByIdAndDelete', async () => {
+            await UserController.deleteUser(req, res);
+            expect(User.findByIdAndDelete).toBeCalledWith(req.params.userId);
+        });
+        it('should return 404 if user doesn\'t exist', async () => {
+            User.findByIdAndDelete.mockReturnValue(undefined);
+            await UserController.deleteUser(req, res);
+            expect(res.statusCode).toBe(404);
+        });
+        it('should delete user', async () => {
+            User.findByIdAndDelete.mockReturnValue(goneUser);
+            await UserController.deleteUser(req, res);
+            expect(res.statusCode).toBe(200);
+            expect(res._getJSONData()).toStrictEqual(goneUser);
+        });
+    });
 });
