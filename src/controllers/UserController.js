@@ -3,6 +3,15 @@ const TokenHelper = require('../helpers/token');
 const ValidationHelper = require('../helpers/validation'); 
 
 class UserController {
+    async getUserData(req, res) {
+        const user = await User.findById(req.params.userId);
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+
+        return res.json(user);
+    }
     async createUser(req, res) { 
         const requiredFields = {
             name: true,

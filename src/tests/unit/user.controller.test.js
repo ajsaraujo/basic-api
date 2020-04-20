@@ -37,6 +37,29 @@ const goneUser = {
 
 const userDoc = new User(newUser);
 
+describe('UserController.getUserData', () => {
+    beforeEach(() => {
+        req.params.userId = '5e99b5f98s38ec5329f750af';
+    });
+    it('should have a listUsers function', () => {
+        expect(typeof UserController.getUserData).toBe('function');
+    });
+    it('should call Users.findById', async () => {
+        await UserController.getUserData(req, res);
+        expect(User.findById).toBeCalledWith(req.params.userId);
+    });
+    it('should return 404 if user doesn\'t exist', async () => {
+        User.findById.mockReturnValue(undefined);
+        await UserController.getUserData(req, res);
+        expect(res.statusCode).toBe(404);
+    });
+    it('should return 200 and user data', async () => {
+        User.findById.mockReturnValue(newUser);
+        await UserController.getUserData(req, res);
+        expect(res.statusCode).toBe(200);
+        expect(res._getJSONData()).toStrictEqual(newUser);
+    });
+})
 describe('UserController.createUser', () => {
     beforeEach(() => {
         // Assignment by copy 
@@ -95,6 +118,7 @@ describe('UserController.updateUser', () => {
         expect(typeof UserController.updateUser).toBe('function');
     });
     it('should call User.findById', async () => {
+        User.findById.mockReturnValue(userDoc);
         await UserController.updateUser(req, res);
         expect(User.findById).toBeCalledWith(req.params.userId);
     });
@@ -116,27 +140,28 @@ describe('UserController.updateUser', () => {
         expect(res._getJSONData()).toStrictEqual(updatingUser);
         expect(res._isEndCalled()).toBeTruthy();
     });
-    describe('UserController.deleteUser', () => {
-        beforeEach(() => {
-            req.params.userId = '5e99b5a66b38ec5329f750af';
-        });
-        it('should have a UserController.deleteUser function', () => {
-            expect(typeof UserController.deleteUser).toBe('function');
-        });
-        it('should call User.findByIdAndDelete', async () => {
-            await UserController.deleteUser(req, res);
-            expect(User.findByIdAndDelete).toBeCalledWith(req.params.userId);
-        });
-        it('should return 404 if user doesn\'t exist', async () => {
-            User.findByIdAndDelete.mockReturnValue(undefined);
-            await UserController.deleteUser(req, res);
-            expect(res.statusCode).toBe(404);
-        });
-        it('should delete user', async () => {
-            User.findByIdAndDelete.mockReturnValue(goneUser);
-            await UserController.deleteUser(req, res);
-            expect(res.statusCode).toBe(200);
-            expect(res._getJSONData()).toStrictEqual(goneUser);
-        });
+});
+
+describe('UserController.deleteUser', () => {
+    beforeEach(() => {
+        req.params.userId = '5e99b5a66b38ec5329f750af';
+    });
+    it('should have a UserController.deleteUser function', () => {
+        expect(typeof UserController.deleteUser).toBe('function');
+    });
+    it('should call User.findByIdAndDelete', async () => {
+        await UserController.deleteUser(req, res);
+        expect(User.findByIdAndDelete).toBeCalledWith(req.params.userId);
+    });
+    it('should return 404 if user doesn\'t exist', async () => {
+        User.findByIdAndDelete.mockReturnValue(undefined);
+        await UserController.deleteUser(req, res);
+        expect(res.statusCode).toBe(404);
+    });
+    it('should delete user', async () => {
+        User.findByIdAndDelete.mockReturnValue(goneUser);
+        await UserController.deleteUser(req, res);
+        expect(res.statusCode).toBe(200);
+        expect(res._getJSONData()).toStrictEqual(goneUser);
     });
 });
