@@ -12,6 +12,7 @@ class UserController {
 
         return res.json(user);
     }
+    
     async createUser(req, res) { 
         const requiredFields = {
             name: true,
@@ -52,8 +53,6 @@ class UserController {
         user.password = req.body.password || user.password;
         
         user = await user.save();
-
-        console.log(user);
 
         return res.status(200).json(user);
     }
