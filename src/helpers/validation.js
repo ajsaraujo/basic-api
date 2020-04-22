@@ -3,7 +3,7 @@ const yup = require('yup');
 const nameRegex = '^[a-zA-Záéíóúãẽĩõũâêîôû ]{2,50}$';
 
 class ValidationHelper { 
-    validateUser = (obj, fieldsRequired) => {
+    validateUser = async (obj, fieldsRequired) => {
         fieldsRequired = fieldsRequired || {};
         return yup.object().shape(
         {
