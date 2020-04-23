@@ -10,7 +10,7 @@ const TokenHelper = require('../helpers/token');
 class AccountController {
     async auth(req, res) {
         const requiredFields = { email: true, password: true };
-        const requestBodyIsValid = ValidationHelper
+        const requestBodyIsValid = await ValidationHelper
             .validateUser(req.body, requiredFields); 
         
         if (!requestBodyIsValid) {

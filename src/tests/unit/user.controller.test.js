@@ -11,6 +11,8 @@ beforeEach(() => {
     req = httpMocks.createRequest();
     res = httpMocks.createResponse();
     next = jest.fn();
+    process.env.JWT_SECRET = 'mysecret';
+    process.env.JWT_EXPIRE_TIME = '7d';
 });
 
 jest.mock('../../models/User');

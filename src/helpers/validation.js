@@ -5,6 +5,14 @@ const nameRegex = '^[a-zA-Záéíóúãẽĩõũâêîôû ]{2,50}$';
 class ValidationHelper { 
     validateUser = async (obj, fieldsRequired) => {
         fieldsRequired = fieldsRequired || {};
+
+        const fields = [obj.name, obj.email, obj.password];
+        for (let value of fields) {
+            if (value && typeof value !== 'string') {
+                return false;
+            }
+        }
+
         return yup.object().shape(
         {
             name: fieldsRequired.name ? yup.string().required().matches(nameRegex) 

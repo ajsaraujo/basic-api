@@ -38,6 +38,15 @@ describe('Validation helper', () => {
         const answer = await ValidationHelper.validateUser(obj);
         expect(answer).toBe(false);
     });
+    it('should reject entries with type different than string (3)', async () => {
+        const obj = {
+            email: 'elliot@ecorp.com',
+            password: 42
+        };
+        const requiredFields = { email: true, password: true };
+        const answer = await ValidationHelper.validateUser(obj, requiredFields);
+        expect(answer).toBe(false);
+    })
     it('should accept if everything is ok', async () => {
         const obj = {
             name: 'Frank Cotton',
