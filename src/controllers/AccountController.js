@@ -48,7 +48,11 @@ class AccountController {
         
         const { email } = req.body;
         const user = await User.findOne({ email });
-
+        
+        if (!user) {
+            return res.status(404).json({ error: 'User not found.' });
+        }
+        
         const newRandomPassword = PasswordHelper.makeRandomPassword();
         user.password = newRandomPassword;
         await user.save();

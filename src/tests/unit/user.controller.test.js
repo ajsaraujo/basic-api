@@ -1,11 +1,13 @@
 const httpMocks = require('node-mocks-http');
 
 const UserController = require('../../controllers/UserController');
+const ValidationHelper = require('../../helpers/validation');
 const User = require('../../models/User');
 
-let req, res, next; 
-
 require('dotenv').config();
+
+
+let req, res, next; 
 
 beforeEach(() => {
     req = httpMocks.createRequest();
@@ -15,8 +17,8 @@ beforeEach(() => {
     process.env.JWT_EXPIRE_TIME = '7d';
 });
 
+jest.mock('../../helpers/validation');
 jest.mock('../../models/User');
-User.prototype.save = jest.fn();
 
 const newUser = {
     name: 'John Q Public',
@@ -71,6 +73,7 @@ describe('UserController.createUser', () => {
         }
 
         req.emailInUse = false;
+        ValidationHelper.validateUser.mockReturnValue(true);
     });
     it('should have a createUser function', () => {
         expect(typeof UserController.createUser).toBe('function');
@@ -79,21 +82,11 @@ describe('UserController.createUser', () => {
         await UserController.createUser(req, res);
         expect(User.create).toBeCalledWith(newUser);
     });
-    it('should return 400 on request body with missing entries', async () => {
-        delete req.body.email;
-        await UserController.createUser(req, res); 
-        expect(res.statusCode).toBe(400);
-    });
-    it('should return 400 on request body with invalid entries (1)', async () => {
-        req.body.email = 'This is not an email';
+    it('should return 400 to requests with invalid body', async () => {
+        ValidationHelper.validateUser.mockReturnValue(false);
         await UserController.createUser(req, res);
         expect(res.statusCode).toBe(400);
     });
-    it('should return 400 on request body with invalid entries (2)', async () => {
-        req.body.name = 41; // Not the answer!
-        await UserController.createUser(req, res);
-        expect(res.statusCode).toBe(400);
-    })
     it('should return 409 if email is already in use', async () => {
         req.emailInUse = true;
         await UserController.createUser(req, res);
@@ -115,6 +108,7 @@ describe('UserController.updateUser', () => {
             req.body[key] = updatingUser[key];
         };
         req.params.userId = '5e99b5a66b38ec5329f750af';
+        ValidationHelper.validateUser.mockReturnValue(true);
     });
     it('should have an updateUser function', () => {
         expect(typeof UserController.updateUser).toBe('function');
@@ -124,13 +118,8 @@ describe('UserController.updateUser', () => {
         await UserController.updateUser(req, res);
         expect(User.findById).toBeCalledWith(req.params.userId);
     });
-    it('should return 400 on request body with invalid entries (1)', async () => {
-        req.body.name = 'peter_pan';
-        await UserController.updateUser(req, res);
-        expect(res.statusCode).toBe(400);
-    });
-    it('should return 400 on request body with invalid entries (2)', async () => {
-        req.body.name = 41; // Still not the answer
+    it('should return 400 on request body with invalid entries', async () => {
+        ValidationHelper.validateUser.mockReturnValue(false);
         await UserController.updateUser(req, res);
         expect(res.statusCode).toBe(400);
     });
