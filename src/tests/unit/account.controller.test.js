@@ -53,5 +53,28 @@ describe('AccountController.auth', () => {
 });
 
 describe('AccountController.recoverPassword', () => {
-
-})
+    beforeEach(() => {
+        req.body = { email: 'elliot@ecorp.com' };
+        ValidationHelper.validateUser.mockReturnValue(true);
+    });
+    it('should return 400 if request body is invalid', async () => {
+        ValidationHelper.validateUser.mockReturnValue(false);
+        await AccountController.recoverPassword(req, res);
+        expect(res.statusCode).toBe(400);
+    });
+    it('should return 404 if account does not exist', async () => {
+        User.findOne.mockReturnValue(undefined);
+        await AccountController.recoverPassword(req, res);
+        expect(res.statusCode).toBe(404);
+    });
+    it('should call user.save and return 200', async () => {
+        const userDoc = new User({
+            email: 'elliot@ecorp.com',
+            password: 'nanana'
+        });
+        User.findOne.mockReturnValue(userDoc);
+        await AccountController.recoverPassword(req, res);
+        expect(User.prototype.save).toBeCalled();
+        expect(res.statusCode).toBe(200);
+    });
+});
