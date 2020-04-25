@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '.env' }); 
+require('dotenv').config(); 
 
 const bodyParser = require('body-parser'); 
 const slowDown = require('express-slow-down'); 

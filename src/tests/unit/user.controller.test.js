@@ -4,9 +4,6 @@ const UserController = require('../../controllers/UserController');
 const ValidationHelper = require('../../helpers/validation');
 const User = require('../../models/User');
 
-require('dotenv').config();
-
-
 let req, res, next; 
 
 beforeEach(() => {

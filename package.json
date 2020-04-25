@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "A basic Node.js API",
   "main": "app.js",
+  "scripts": {
+    "test": "jest --watchAll --setupFiles dotenv/config"
+  },
   "jest": {
     "testEnvironment": "node"
-  },
-  "scripts": {
-    "test": "jest --watchAll"
   },
   "repository": {
     "type": "git",
@@ -37,6 +37,7 @@
     "yup": "^0.28.3"
   },
   "devDependencies": {
+    "factory-girl": "^5.0.4",
     "jest": "^25.3.0",
     "mongodb-memory-server": "^6.5.2",
     "node-mocks-http": "^1.8.1",
