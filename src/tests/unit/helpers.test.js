@@ -8,7 +8,7 @@ describe('Validation helper', () => {
         const answer = await ValidationHelper.validateUser(obj, fieldsRequired);
         expect(answer).toBe(false);
     });
-    it('should reject emails with invalid formats', async () => {
+    it('should reject emails with invalid format', async () => {
         const fieldsRequired = { email: true };
         const obj = { email: 'notemail.com' };
         const answer = await ValidationHelper.validateUser(obj, fieldsRequired);

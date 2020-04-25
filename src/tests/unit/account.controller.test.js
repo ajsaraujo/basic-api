@@ -1,10 +1,14 @@
 const httpMocks = require('node-mocks-http');
 const bcrypt = require('bcrypt');
+
 const AccountController = require('../../controllers/AccountController');
 const User = require('../../models/User');
+const ValidationHelper = require('../../helpers/validation');
+
 let req, res, next; 
 
 jest.mock('../../models/User');
+jest.mock('../../helpers/validation');
 jest.mock('bcrypt');
 
 require('dotenv').config();
@@ -27,14 +31,10 @@ describe('AccountController.auth', () => {
             password: 'encryptedpassword68574',
             id: '8g47886dfs84fd35sf83'
         });
+        ValidationHelper.validateUser.mockReturnValue(true);
     });
-    it('should return 400 if request body has missing fields', async () => {
-        req.body.email = undefined;
-        await AccountController.auth(req, res);
-        expect(res.statusCode).toBe(400);
-    });
-    it('should return 400 if request body has invalid properties', async () => {
-        req.body.password = 42;
+    it('should return 400 if request body is invalid', async () => {
+        ValidationHelper.validateUser.mockReturnValue(false);
         await AccountController.auth(req, res);
         expect(res.statusCode).toBe(400);
     });
@@ -50,4 +50,8 @@ describe('AccountController.auth', () => {
     });
     it('should return 200 with user and token but no password', async () => {
     });
+});
+
+describe('AccountController.recoverPassword', () => {
+
 })
