@@ -39,12 +39,12 @@ class AccountController {
 
     async recoverPassword(req, res) {
         const requiredFields = { email: true }; 
-        const requestBodyIsValid = ValidationHelper
+        const requestBodyIsValid = await ValidationHelper
             .validateUser(req.body, requiredFields);
 
         if (!requestBodyIsValid) {
             return res.status(400).json({ error: 'Invalid request body.' });
-        }
+        } 
         
         const { email } = req.body;
         const user = await User.findOne({ email });

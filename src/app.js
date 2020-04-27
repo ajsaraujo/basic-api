@@ -4,8 +4,8 @@ const bodyParser = require('body-parser');
 const slowDown = require('express-slow-down'); 
 const express = require('express');
 
-const routes = require('./routes');
 require('./database/database');
+const routes = require('./routes');
 
 const app = express();
 

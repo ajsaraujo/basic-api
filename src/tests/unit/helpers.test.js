@@ -10,9 +10,15 @@ describe('Validation helper', () => {
     });
     it('should reject emails with invalid format', async () => {
         const fieldsRequired = { email: true };
+        
         const obj = { email: 'notemail.com' };
         const answer = await ValidationHelper.validateUser(obj, fieldsRequired);
+        
+        const obj2 = { email: 'Frank Cotton' };
+        const answer2 = await ValidationHelper.validateUser(obj2, fieldsRequired);
+
         expect(answer).toBe(false);
+        expect(answer2).toBe(false);
     });
     it('should reject names with special characters', async () => {
         const fieldsRequired = { name: true };

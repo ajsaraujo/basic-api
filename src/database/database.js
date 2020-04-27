@@ -9,16 +9,24 @@ const mongooseOptions = {
 }; 
 
 console.log(connectionString);
-const connection = mongoose.connect(connectionString, mongooseOptions);
-mongoose.set('useCreateIndex', true); 
 
-mongoose.connection.once('open', _ => {
-    console.log('App connected with mongo.'); 
-});
+let connection; 
 
-mongoose.connection.on('error', err => {
-    console.log('Error connecting with mongo.');
-    console.log(err); 
-});
+if (process.env.NODE_ENV === 'test') {
+    const testDb = require('./testDatabase');
+    connection = testDb.connection();
+} else {
+    connection = mongoose.connect(connectionString, mongooseOptions);
+    mongoose.set('useCreateIndex', true); 
+    
+    mongoose.connection.once('open', _ => {
+        console.log('App connected with mongo.'); 
+    });
+    
+    mongoose.connection.on('error', err => {
+        console.log('Error connecting with mongo.');
+        console.log(err); 
+    });    
+}
 
 module.exports = connection;

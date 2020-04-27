@@ -18,7 +18,7 @@ Router.put('/users/:userId', auth, UserController.updateUser);
 Router.delete('/users/:userId', auth, UserController.deleteUser);
 
 // Account
-Router.post('/account/recover', emailInUse, AccountController.recoverPassword);
+Router.post('/account/recover', AccountController.recoverPassword);
 Router.post('/account/auth', AccountController.auth)
 
 module.exports = Router;

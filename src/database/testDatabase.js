@@ -3,23 +3,23 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongo = new MongoMemoryServer();
 
-module.exports.connect = async () => {
+module.exports.connection = async () => {
     const uri = await mongo.getConnectionString();
 
     const options = {
         useNewUrlParser: true,
-        autoReconnect: true,
-        reconnectTries: Number.MAX_VALUE,
-        reconnectInterval: 1000
+        useUnifiedTopology: true
     };
 
-    await mongoose.connect(uri, options);
+    const connection = await mongoose.connect(uri, options);
 
     mongoose.connection.once('open', 
         () => console.log('App connected to in memory database.'));
 
     mongoose.connection.on('error', 
         () => console.log('Error connecting to in memory database.'));
+
+    return connection;
 }
 
 module.exports.closeDatabase = async () => {
@@ -32,7 +32,7 @@ module.exports.clearDatabase = async () => {
     const collections = mongoose.connection.collections;
 
     for (const key in collections) {
-        const collection = colletions[key];
+        const collection = collections[key];
         await collection.deleteMany();
     }
 }
