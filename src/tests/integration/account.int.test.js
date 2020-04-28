@@ -99,7 +99,5 @@ describe('POST /api/account/recover', () => {
 
         expect(response.status).toBe(200);
         expect(passwordChanged).toBe(true);
-
-        //user.remove();
     });
 });

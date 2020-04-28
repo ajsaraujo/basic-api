@@ -14,6 +14,7 @@ Router.get('/', (req, res) => res.send('Olá!'));
 
 // User CRUD operations 
 Router.post('/users', emailInUse, UserController.createUser);
+Router.get('/users/:userId', auth, UserController.getUserData);
 Router.put('/users/:userId', auth, UserController.updateUser);
 Router.delete('/users/:userId', auth, UserController.deleteUser);
 
