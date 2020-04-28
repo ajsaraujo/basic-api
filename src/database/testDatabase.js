@@ -12,7 +12,8 @@ module.exports.connection = async () => {
     };
 
     const connection = await mongoose.connect(uri, options);
-
+    mongoose.set('useCreateIndex', true);
+    
     mongoose.connection.once('open', 
         () => console.log('App connected to in memory database.'));
 
