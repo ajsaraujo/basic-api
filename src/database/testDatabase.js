@@ -3,7 +3,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const mongo = new MongoMemoryServer();
 
-module.exports.connection = async () => {
+module.exports.connect = async () => {
     const uri = await mongo.getConnectionString();
 
     const options = {
@@ -11,7 +11,7 @@ module.exports.connection = async () => {
         useUnifiedTopology: true
     };
 
-    const connection = await mongoose.connect(uri, options);
+    await mongoose.connect(uri, options);
     mongoose.set('useCreateIndex', true);
     
     mongoose.connection.once('open', 
@@ -19,8 +19,6 @@ module.exports.connection = async () => {
 
     mongoose.connection.on('error', 
         () => console.log('Error connecting to in memory database.'));
-
-    return connection;
 }
 
 module.exports.closeDatabase = async () => {

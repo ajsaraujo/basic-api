@@ -7,9 +7,13 @@ const testDatabase = require('../../database/testDatabase');
 
 let endpoint;
 
-afterAll(() => {
-    testDatabase.clearDatabase();
-    testDatabase.closeDatabase();
+beforeAll( async () => {
+    await testDatabase.connect();
+});
+
+afterAll( async () => {
+    await testDatabase.clearDatabase();
+    await testDatabase.closeDatabase();
 });
 
 let user; 
@@ -96,6 +100,6 @@ describe('POST /api/account/recover', () => {
         expect(response.status).toBe(200);
         expect(passwordChanged).toBe(true);
 
-        user.remove();
+        //user.remove();
     });
 });
