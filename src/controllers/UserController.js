@@ -57,7 +57,7 @@ class UserController {
         user = await user.save();
 
         user.password = undefined; 
-        
+
         return res.status(200).json(user);
     }
 
@@ -68,7 +68,7 @@ class UserController {
             return res.status(404).json({ error: 'User not found.' });
         }
         
-        return res.status(200).json(user);
+        return res.status(200).send('OK');
     }
 }
 

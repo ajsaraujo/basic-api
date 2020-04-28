@@ -125,7 +125,7 @@ describe('UserController.updateUser', () => {
         await UserController.updateUser(req, res);
         expect(res.statusCode).toBe(400);
     });
-    it('should return 200 and user', async () => {
+    it('should return 200', async () => {
         // This could be better
         User.findById.mockReturnValue(userDoc);
         User.prototype.save.mockReturnValue(updatingUser);
@@ -160,6 +160,6 @@ describe('UserController.deleteUser', () => {
         User.findByIdAndDelete.mockReturnValue(goneUser);
         await UserController.deleteUser(req, res);
         expect(res.statusCode).toBe(200);
-        expect(res._getJSONData()).toStrictEqual(goneUser);
+        expect(User.findByIdAndDelete).toBeCalledWith(req.params.userId);
     });
 });
