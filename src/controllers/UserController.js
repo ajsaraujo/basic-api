@@ -56,6 +56,8 @@ class UserController {
         
         user = await user.save();
 
+        user.password = undefined; 
+        
         return res.status(200).json(user);
     }
 

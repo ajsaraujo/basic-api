@@ -67,6 +67,7 @@ describe('POST /api/account/auth', () => {
         expect(response.status).toBe(200);
         expect(response.body.user.email).toBe('joel@mail.com');
         expect(response.body.token).toBeTruthy();
+        expect(response.body.password).toBeFalsy();
     });
 });
 describe('POST /api/account/recover', () => {

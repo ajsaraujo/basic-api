@@ -116,6 +116,7 @@ describe('UserController.updateUser', () => {
     });
     it('should call User.findById', async () => {
         User.findById.mockReturnValue(userDoc);
+        User.prototype.save.mockReturnValue(updatingUser);
         await UserController.updateUser(req, res);
         expect(User.findById).toBeCalledWith(req.params.userId);
     });
@@ -129,8 +130,13 @@ describe('UserController.updateUser', () => {
         User.findById.mockReturnValue(userDoc);
         User.prototype.save.mockReturnValue(updatingUser);
         await UserController.updateUser(req, res);
-        expect(res._getJSONData()).toStrictEqual(updatingUser);
+        
         expect(res._isEndCalled()).toBeTruthy();
+
+        const userData = res._getJSONData();
+        expect(userData.name).toBe(updatingUser.name);
+        expect(userData.email).toBe(updatingUser.email);
+        expect(userData.password).toBeFalsy();
     });
 });
 
