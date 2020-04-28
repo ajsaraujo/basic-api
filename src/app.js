@@ -23,7 +23,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/api', routes);
-app.listen(process.env.PORT);
-console.log(`API is listening on port ${process.env.PORT}.`);
 
+if (process.env.NODE_ENV !== 'test') {
+    app.listen(process.env.PORT);
+    console.log(`API is listening on port ${process.env.PORT}.`);
+}
+    
 module.exports = app;

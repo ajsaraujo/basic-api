@@ -76,6 +76,7 @@ describe('UserController.createUser', () => {
         expect(typeof UserController.createUser).toBe('function');
     });
     it('should call User.create', async () => {
+        User.create.mockReturnValue({});
         await UserController.createUser(req, res);
         expect(User.create).toBeCalledWith(newUser);
     });
@@ -91,10 +92,13 @@ describe('UserController.createUser', () => {
     });
     it('should return 201 and user', async () => {
         User.create.mockReturnValue(newUser);
+        
         await UserController.createUser(req, res);
+        
         expect(res.statusCode).toBe(201);
         expect(res._isEndCalled()).toBeTruthy();
-        expect(res._getJSONData()).toStrictEqual(newUser);
+        expect(res._getJSONData().name).toStrictEqual(newUser.name);
+        expect(res._getJSONData().email).toStrictEqual(newUser.email);
     });
 });
 

@@ -1,7 +1,7 @@
 const User = require('../models/User');
 
 const emailInUse = async (req, res, next) => {
-    if (!req.body.email) {
+    if (!req.body.email || typeof req.body.email !== 'string') {
         return res.status(400).json({ error: 'User email not provided.' });
     }
     

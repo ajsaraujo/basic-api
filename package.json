@@ -4,7 +4,7 @@
   "description": "A basic Node.js API",
   "main": "app.js",
   "scripts": {
-    "test": "jest --watchAll --detectOpenHandles"
+    "test": "jest --watchAll"
   },
   "jest": {
     "testEnvironment": "node"

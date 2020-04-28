@@ -32,7 +32,9 @@ class UserController {
         }
 
         const user = await User.create(req.body);
-            
+        
+        user.password = undefined;
+        
         return res.status(201).json(user);
     }
     
