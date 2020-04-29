@@ -1,5 +1,9 @@
 const express = require('express'); 
+const swaggerUi = require('swagger-ui-express');
 const Router = express.Router();
+
+// Documentation
+const swaggerDocument = require('./swagger.json');
 
 // Controllers
 const UserController = require('./controllers/UserController');
@@ -9,8 +13,9 @@ const AccountController = require('./controllers/AccountController');
 const auth = require('./middlewares/auth');
 const emailInUse = require('./middlewares/emailInUse');
 
-// Test
-Router.get('/', (req, res) => res.send('Olá!'));
+// Documentation UI
+Router.use('/', swaggerUi.serve);
+Router.get('/', swaggerUi.setup(swaggerDocument));
 
 // User CRUD operations 
 Router.post('/users', emailInUse, UserController.createUser);

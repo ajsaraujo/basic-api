@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "basic-api",
+    "version": "0.0.1"
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "Frank Cotton"
+          },
+          "email": {
+            "type": "string",
+            "example": "frankcotton@gmail.com"
+          },
+          "password": {
+            "type": "string",
+            "example": "cometodaddy"
+          }
+        }
+      },
+      "UserReturn": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "5e867360aeaf2d03e5bdf9da"
+          },
+          "name": {
+            "type": "string",
+            "example": "Frank Cotton"
+          },
+          "email": {
+            "type": "string",
+            "example": "frankcotton@gmail.com"
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/users": {
+      "post": {
+        "summary": "Create new user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User created.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReturn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body."
+          },
+          "409": {
+            "description": "Email already in use."
+          }
+        }
+      }
+    },
+    "/api/users/:userId": {
+      "parameters": [
+        {
+          "in": "header",
+          "name": "auth",
+          "schema": {
+            "type": "string",
+            "format": "jwt"
+          },
+          "required": true,
+          "description": "User access token."
+        }
+      ],
+      "put": {
+        "summary": "Update user data. Doesn't update email.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User data updated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReturn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body or invalid token."
+          },
+          "401": {
+            "description": "No token provided."
+          },
+          "403": {
+            "description": "Token belongs to another user."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      },
+      "get": {
+        "summary": "Get user data.",
+        "responses": {
+          "200": {
+            "description": "Ok.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserReturn"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token."
+          },
+          "401": {
+            "description": "No token provided."
+          },
+          "403": {
+            "description": "Token belongs to another user."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete user.",
+        "responses": {
+          "200": {
+            "description": "User deleted."
+          },
+          "400": {
+            "description": "Invalid token."
+          },
+          "401": {
+            "description": "No token provided."
+          },
+          "403": {
+            "description": "Token belongs to another user."
+          },
+          "404": {
+            "description": "User not found."
+          }
+        }
+      }
+    },
+    "/account/auth": {
+      "post": {
+        "summary": "Auth user.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "required": [
+                  "email",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "elliot@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "iammrrobot"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User authenticated.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body."
+          },
+          "404": {
+            "description": "User not found."
+          },
+          "409": {
+            "description": "Wrong password."
+          }
+        }
+      }
+    },
+    "/account/recover": {
+      "post": {
+        "summary": "Recover password. Changes the user's password and sends him an email with the new password.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "email": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password was redefined."
+          },
+          "400": {
+            "description": "Invalid request body."
+          },
+          "404": {
+            "description": "User not found."
+          },
+          "500": {
+            "description": "Error sending email."
+          }
+        }
+      }
+    }
+  }
+}

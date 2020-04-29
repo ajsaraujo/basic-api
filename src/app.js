@@ -1,13 +1,14 @@
 require('dotenv').config(); 
 
+const express = require('express');
 const bodyParser = require('body-parser'); 
 const slowDown = require('express-slow-down'); 
-const express = require('express');
 
 require('./database/database');
-const routes = require('./routes');
 
 const app = express();
+
+const routes = require('./routes');
 
 // Slow down requests
 const speedLimiter = slowDown({
@@ -15,6 +16,7 @@ const speedLimiter = slowDown({
     delayAfter: 45, // Allow 45 requests
     delayMs: 100 // After that delay responses
 }); 
+
 app.enable('trust proxy'); 
 app.use(speedLimiter);
 
@@ -23,5 +25,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.use('/api', routes);
-    
+
 module.exports = app;
