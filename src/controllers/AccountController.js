@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 
-// Helpers
 const ValidationHelper = require('../helpers/validation');
 const PasswordHelper = require('../helpers/password');
 const EmailHelper = require('../helpers/email');
@@ -26,15 +25,16 @@ class AccountController {
 
         const passwordIsOk = await bcrypt.compare(password, user.password);
 
-        if (passwordIsOk) {
-            user.password = undefined; 
-            return res.status(200).json({ 
-                user, 
-                token: TokenHelper.makeUserToken(user.id)
-            });
+        if (!passwordIsOk) {
+            return res.status(409).json({ error: 'Wrong password.' });
         }
 
-        return res.status(409).json({ error: 'Wrong password.' }); 
+        user.password = undefined; 
+
+        return res.status(200).json({ 
+            user, 
+            token: TokenHelper.makeUserToken(user.id)
+        });
     }
 
     async recoverPassword(req, res) {
@@ -53,11 +53,10 @@ class AccountController {
             return res.status(404).json({ error: 'User not found.' });
         }
         
-        const newRandomPassword = PasswordHelper.makeRandomPassword();
-        user.password = newRandomPassword;
+        user.password = PasswordHelper.makeRandomPassword();
         await user.save();
 
-        EmailHelper.sendRecoveryEmail(user.email, newRandomPassword, function(err, info) {
+        EmailHelper.sendRecoveryEmail(user.email, user.password, function(err, info) {
             if (err) {
                 console.log(err);
                 return res.status(500).json({ error: 'Error sending email.' }); 

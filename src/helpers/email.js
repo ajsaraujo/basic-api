@@ -13,13 +13,13 @@ class EmailHelper {
         let mailOptions = {
             from: process.env.EMAIL_ACCOUNT, 
             to: receiverEmail, 
-            subject: '[BASIC API] Recuperação de senha',
+            subject: '[BASIC API] Account recovery',
             html: `
-            <p>Esqueceu sua senha?</p>
+            <p>Forgot your password?</p>
             </br>
-            <p>Não se preocupe, a gente gerou uma nova senha pra você: ${newRandomPassword}</p>
+            <p>Don't worry, we made another one for you: ${newRandomPassword}</p>
             `,
-            text: `Esqueceu sua senha? Não se preocupe, a gente gerou uma nova senha pra você: ${newRandomPassword}`
+            text: `Forgot your password? Don't worry, we made another one for you: ${newRandomPassword}`
         };
         
         transporter.sendMail(mailOptions, callback); 
