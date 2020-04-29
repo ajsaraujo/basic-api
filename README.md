@@ -10,3 +10,4 @@ basic-api é uma API feita em Node.js com Express e MongoDB. Ela implementa um C
 4. Na pasta raiz do projeto, execute o comando ``npm install`` para instalar todas as dependências.
 5. Também na pasta raiz crie um arquivo `.env` e adicione todos os campos que estão em `.env.example`, preenchendo da forma que preferir. 
 6. Para que a aplicação possa enviar os emails de recuperação de conta, lembre-se de permitir o acesso ao email que você forneceu no `.env`. Caso seu provedor seja o gmail, você pode permitir o acesso clicando [aqui](https://myaccount.google.com/), e depois indo em Proteger conta -> Acesso de terceiros -> Ativar. 
+7. Para rodar o projeto, basta executar o comando ```node app.js``` na pasta `src/`. Para executar os testes, utilize `npm run test`. 
