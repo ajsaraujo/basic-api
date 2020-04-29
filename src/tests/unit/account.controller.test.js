@@ -38,15 +38,15 @@ describe('AccountController.auth', () => {
         await AccountController.auth(req, res);
         expect(res.statusCode).toBe(400);
     });
-    it('should return 404 if user is not found', async () => {
+    it('should return 401 if user is not found', async () => {
         User.findOne.mockReturnValue(undefined);
         await AccountController.auth(req, res);
-        expect(res.statusCode).toBe(404);
+        expect(res.statusCode).toBe(401);
     });
-    it('should return 409 if password is wrong', async () => {
+    it('should return 401 if password is wrong', async () => {
         bcrypt.compare.mockReturnValue(false);
         await AccountController.auth(req, res);
-        expect(res.statusCode).toBe(409);
+        expect(res.statusCode).toBe(401);
     });
     it('should return 200 with user and token but no password', async () => {
         bcrypt.compare.mockReturnValue(true);

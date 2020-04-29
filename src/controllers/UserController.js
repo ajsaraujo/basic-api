@@ -1,5 +1,4 @@
 const User = require('../models/User'); 
-const TokenHelper = require('../helpers/token'); 
 const ValidationHelper = require('../helpers/validation'); 
 
 class UserController {

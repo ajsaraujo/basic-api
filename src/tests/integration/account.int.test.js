@@ -39,23 +39,23 @@ describe('POST /api/account/auth', () => {
             });
         expect(response.status).toBe(400);
     });
-    it('should return 404 if user is not found', async () => {
+    it('should return 401 if user is not found', async () => {
         const response = await request(app)
             .post(endpoint)
             .send({
                 email: 'joel@gmail.com',
                 password: 'clementine'
             });
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(401);
     });
-    it('should return 409 if password is wrong', async () => {
+    it('should return 401 if password is wrong', async () => {
         const response = await request(app)
             .post(endpoint)
             .send({
                 email: 'joel@mail.com',
                 password: 'naomi'
             });
-        expect(response.status).toBe(409);
+        expect(response.status).toBe(401);
     });
     it('should return 200 and data if everything is ok', async () => {
         const response = await request(app)

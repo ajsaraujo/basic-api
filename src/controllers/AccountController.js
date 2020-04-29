@@ -20,13 +20,13 @@ class AccountController {
         const user = await User.findOne({ email });
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found.' });
+            return res.status(401).json({ error: 'Invalid email and/or password.' });
         }
 
         const passwordIsOk = await bcrypt.compare(password, user.password);
 
         if (!passwordIsOk) {
-            return res.status(409).json({ error: 'Wrong password.' });
+            return res.status(401).json({ error: 'Invalid email and/or password.' });
         }
 
         user.password = undefined; 
