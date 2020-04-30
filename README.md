@@ -1,13 +1,13 @@
 ## basic-api 
 
-basic-api é uma API feita em Node.js com Express e MongoDB. Ela implementa um CRUD de usuários, além de endpoints para autenticação e recuperação de senha. Foram escritos testes unitários e integrados para todos os endpoints, middlewares e helpers. A intenção é ser um projeto generalista e coeso que sirva como alicerce para aplicações maiores. 
+basic-api is an API made in Node.js with Express and MongoDB. It implements an user CRUD, besides endpoints for authentication and password recovery. Unit and integration tests were written for all endpoints, middlewares and helper methods. My intention was to create a generalist and cohesive application that may serve as a foundation for bigger apps.
 
-### Instalação e uso 
+### INstallation and usage
 
-1. Instale o [Node.js e o NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) na sua máquina se ainda não os tiver.
-2. Você precisará de conexão com um banco de dados MongoDB, podendo ser [local](https://zellwk.com/blog/local-mongodb/) ou [remota](https://www.mongodb.com/cloud/atlas).
-3. Clone o projeto com ``git clone https://github.com/ajsaraujo/basic-api.git``.
-4. Na pasta raiz do projeto, execute o comando ``npm install`` para instalar todas as dependências.
-5. Também na pasta raiz crie um arquivo `.env` e adicione todos os campos que estão em `.env.example`, preenchendo da forma que preferir. 
-6. Para que a aplicação possa enviar os emails de recuperação de conta, lembre-se de permitir o acesso ao email que você forneceu no `.env`. Caso seu provedor seja o gmail, você pode permitir o acesso clicando [aqui](https://myaccount.google.com/), e depois indo em Proteger conta -> Acesso de terceiros -> Ativar. 
-7. Para rodar o projeto, basta executar o comando ```node server.js``` na pasta `src/`. Para executar os testes, utilize `npm run test`. 
+1. Install [Node.js and NPM](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) if you didn't yet.
+2. You will need a connection with MongoDB, be it [local](https://zellwk.com/blog/local-mongodb/) or [remote](https://www.mongodb.com/cloud/atlas).
+3. Clone the project using ``git clone https://github.com/ajsaraujo/basic-api.git``. 
+4. On the project's source folder, run the command ``npm install`` to install all dependencies.
+5. Also on the source folder, create a `.env` file and add all fields that are in `.env.example`, filling them as you wish. 
+6. Remember to allow access in the email you provided, so the application can send emails. If your email provider is gmail, you can allow access from third party apps [here](https://myaccount.google.com/).
+7. To run the app, execute the command ``node server.js`` on the `src/` folder. To run the tests, use `npm run test`. 
